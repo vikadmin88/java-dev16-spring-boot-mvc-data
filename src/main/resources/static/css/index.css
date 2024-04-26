@@ -1,0 +1,110 @@
+/* Reset styles */
+* {
+    box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+    margin: 0;
+}
+
+p:last-child {
+    margin-bottom: 0;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+a {
+    color: currentColor;
+    text-decoration: none;
+}
+
+button {
+    cursor: pointer;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+.container {
+    max-width: 1200px;
+    /*margin: 0 auto;*/
+    padding: 15px;
+}
+
+.title {
+    margin-bottom: 10px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+
+.label {
+    display: flex;
+    flex-direction: column;
+    max-width: 400px;
+}
+
+.label input {
+    height: 40px;
+    border-radius: 5px;
+    padding: 6px 8px;
+}
+
+.label textarea {
+    height: 80px;
+    border-radius: 5px;
+    border: 2px solid;
+    padding: 6px 8px;
+}
+
+.list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    max-width: 800px;
+}
+
+.list-item {
+    border-radius: 5px;
+    border: 2px solid;
+    padding: 8px;
+}
+
+.item-id {
+    text-overflow: ellipsis;
+    margin-bottom: 4px;
+}
+
+.item-title {
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.item-content {
+    margin-bottom: 16px;
+}
+
+.btn {
+    width: 80px;
+    padding: 6px 12px;
+    margin-right: 4px;
+    border-radius: 5px;
+}

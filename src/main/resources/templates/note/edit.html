@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <script th:src="@{/js/main.js}"></script>
+    <link th:href="@{/css/index.css}" rel="stylesheet" />
+    <title>Note Manager</title>
+</head>
+<body class="container">
+<h1 class="title" th:text="'Edit note: ' + ${note.id}"></h1>
+<h2 style="color: red;" th:text="${errorMessage}">Error:</h2>
+<form class="form" action="/note/edit" method="post">
+    <label class="label">Id:
+        <input type="text" name="id" th:value="${note.id}" readonly/>
+    </label>
+    <label class="label">Title:
+        <input type="text" name="title" th:value="${note.title}"/>
+    </label>
+    <label class="label">Content:
+        <textarea name="content" cols="30" rows="10" th:text="${note.content}"></textarea>
+    </label>
+    <button class="btn" type="submit">Update</button>
+</form>
+</body>
+</html>
