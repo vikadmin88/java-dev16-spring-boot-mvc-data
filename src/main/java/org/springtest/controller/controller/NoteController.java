@@ -63,6 +63,5 @@ public class NoteController {
     @ResponseStatus(HttpStatus.OK)
     public void deleteNoteById(@RequestBody UpdateNoteRequest request) throws NoteNotFoundException {
         noteService.deleteById(request.getId());
-        noteList();
     }
 }
