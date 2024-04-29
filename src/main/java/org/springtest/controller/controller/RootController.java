@@ -11,11 +11,12 @@ public class RootController {
 
     @RequestMapping(value = "/", method = {RequestMethod.GET})
     public ModelAndView root() {
-        return new ModelAndView("redirect:note/list");
+        return new ModelAndView("redirect:note");
     }
 
     @RequestMapping(value = "/note", method = {RequestMethod.GET})
     public ModelAndView rootNotes() {
-        return new ModelAndView("redirect:note/list");
+
+        return new ModelAndView("note/index");
     }
 }

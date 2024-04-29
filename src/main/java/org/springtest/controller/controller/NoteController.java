@@ -1,83 +1,68 @@
 package org.springtest.controller.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-import org.springtest.data.entity.Note;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springtest.controller.request.CreateNoteRequest;
+import org.springtest.controller.request.UpdateNoteRequest;
+import org.springtest.controller.response.NoteResponse;
+import org.springtest.service.dto.NoteDto;
 import org.springtest.service.exception.NoteNotFoundException;
+import org.springtest.service.mapper.NoteMapper;
 import org.springtest.service.service.NoteService;
 
 import java.util.List;
 import java.util.UUID;
 
 @Slf4j
-@Controller
+@Validated
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/note")
 public class NoteController {
 
     private final NoteService noteService;
+    private final NoteMapper noteMapper;
 
-    @RequestMapping(value = "/list", method = {RequestMethod.GET})
-    public ModelAndView listNotes() {
-        ModelAndView result = new ModelAndView("note/list");
-        List<Note> notes = noteService.listAll();
-        result.addObject("notes", notes);
-        return result;
+    @GetMapping("/list")
+    public ResponseEntity<List<NoteResponse>> noteList() {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(noteMapper.toNoteResponses(noteService.listAll()));
+}
+
+    @GetMapping("/edit")
+    public ResponseEntity<NoteResponse> getNoteById(@RequestParam("id") UUID id) throws NoteNotFoundException {
+        NoteDto noteDto = noteService.getById(id);
+        return ResponseEntity
+                .status(HttpStatus.ACCEPTED)
+                .body(noteMapper.toNoteResponse(noteDto));
     }
 
-
-    @RequestMapping(value = "/edit", method = {RequestMethod.GET})
-    public ModelAndView getNoteForUpdate(@NotNull @RequestParam(value="id") UUID id) {
-        Note note = new Note();
-        ModelAndView result = new ModelAndView("note/edit");
-        try {
-            note = noteService.getById(id);
-        } catch (NoteNotFoundException ex) {
-            result.addObject("errorMessage", ex.getMessage());
-        }
-        result.addObject("note", note);
-        return result;
+    @PostMapping("/create")
+    public ResponseEntity<NoteResponse> createNote(@Valid @NotNull @RequestBody CreateNoteRequest request) {
+        NoteDto newNote = noteService.add(noteMapper.toNoteDto(request));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(noteMapper.toNoteResponse(newNote));
     }
 
-    @RequestMapping(value = "/create", method = {RequestMethod.POST})
-    public ModelAndView createNote(
-        @RequestParam(value="title") @Size(min = 1, max = 250) String title,
-        @RequestParam(value="content") @NotBlank String content) {
-        Note note = new Note();
-        note.setTitle(title);
-        note.setContent(content);
-        noteService.add(note);
-        return new ModelAndView("redirect:list");
-    }
-
-    @RequestMapping(value = "/edit", method = {RequestMethod.POST})
-    public ModelAndView updateNote(
-        @NotNull @RequestParam(value="id") UUID id,
-        @Size(min = 1, max = 250) @RequestParam(value="title") String title,
-        @NotEmpty @RequestParam(value="content") String content) throws NoteNotFoundException {
-        Note note = new Note();
-        note.setId(id);
-        note.setTitle(title);
-        note.setContent(content);
-        noteService.update(note);
-        return new ModelAndView("redirect:list");
+    @PutMapping("/edit")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateNote(
+        @RequestBody @Valid @NotNull UpdateNoteRequest request) throws NoteNotFoundException {
+        noteService.update(noteMapper.toNoteDto(request.getId(), request));
     }
 
     @DeleteMapping("/delete")
-    @RequestMapping(value = "/delete", method = {RequestMethod.POST})
-    public ModelAndView deleteNoteById(@Valid @NotNull @RequestParam(value="id") UUID id) throws NoteNotFoundException {
-        noteService.deleteById(id);
-        return new ModelAndView("redirect:list");
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteNoteById(@RequestBody UpdateNoteRequest request) throws NoteNotFoundException {
+        noteService.deleteById(request.getId());
+        noteList();
     }
 }
